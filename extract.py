@@ -84,7 +84,7 @@ def text_output():
     for i in range(len(internal_number)):
         print_obj += """
 ============================================================
-internal_number: %s\n
+internal number: %s\n
 trialid: %s\n
 last refreshed on: %s\n
 public_title: %s\n
