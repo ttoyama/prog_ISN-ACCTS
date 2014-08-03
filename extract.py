@@ -10,7 +10,7 @@ from reportlab.platypus import Paragraph, Table, TableStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
 from reportlab.lib import colors
 
-f = open("ICTRP-Results_long.xml", "r")
+f = open("xml/ICTRP-Results_long.xml", "r")
 f_data = f.readlines()
 #delete data after scientific titlech   
 
