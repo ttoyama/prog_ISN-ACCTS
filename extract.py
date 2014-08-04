@@ -10,7 +10,7 @@ from reportlab.platypus import Paragraph, Table, TableStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
 from reportlab.lib import colors
 
-f = open("xml/ICTRP-Results_long.xml", "r")
+f = open("xml/ICTRP-Results_short.xml", "r")
 f_data = f.readlines()
 #delete data after scientific titlech   
 
@@ -82,8 +82,7 @@ shaping()
 def text_output():
     print_obj = ""
     for i in range(len(internal_number)):
-        print_obj += """
-============================================================
+        print_obj += """==== %03d =================================================
 internal number: %s\n
 trialid: %s\n
 last refreshed on: %s\n
@@ -108,6 +107,7 @@ primary_outcome: \t%s
 secondary_id: %s
 ============================================================
     """ %(
+            i +1,
             internal_number[i].string,
             trialid[i].string,
             last_refreshed_on[i].string,
