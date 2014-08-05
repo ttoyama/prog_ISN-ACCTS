@@ -10,7 +10,7 @@ from reportlab.platypus import Paragraph, Table, TableStyle
 from reportlab.lib.enums import TA_JUSTIFY, TA_LEFT, TA_CENTER
 from reportlab.lib import colors
 
-f = open("xml/ICTRP-Results_long.xml", "r")
+f = open("xml/ICTRP-Results_saro.xml", "r")
 f_data = f.readlines()
 #delete data after scientific titlech   
 
@@ -39,49 +39,48 @@ intervention = x('intervention')
 primary_outcome = x('primary_outcome')
 secondary_id = x('secondary_id')
 
-
-def shaping_1(x):
-    for i in range(len(x)):
+def shaping_1(st):
+    for i in range(len(st)):
         p = re.compile('^[\w|\d|&lt;br&gt;]')
         q = re.compile('&lt;br&gt;')
-        p_1 = p.findall(x[i].string)
-        x[i].string = p.sub('\n\t'+p_1[0], x[i].string)
-        x[i].string = q.sub('\n\t', x[i].string)  
+        p_1 = p.findall(st[i].string)
+        st[i].string = p.sub('\n\t'+p_1[0], st[i].string)
+        st[i].string = q.sub('\n\t', st[i].string)  
 
-def shaping_2(x):
-    for i in range(len(x)):
+def shaping_2(st):
+    for i in range(len(st)):
         p = re.compile('  +')
-        x[i].string = p.sub('', x[i].string)
+        st[i].string = p.sub('', st[i].string)
 
-def shaping_3(x):
-    for i in range(len(x)):
+def shaping_3(st):
+    for i in range(len(st)):
         p = re.compile('  +')
-        x[i].string = p.sub('', x[i].string)
+        st[i].string = p.sub('', st[i].string)
 
-def shaping_4(x):
-    for i in range(len(x)):
+def shaping_4(st):
+    for i in range(len(st)):
         p = re.compile('&lt;br&gt;')
         q = re.compile('Male')
-        x[i].string = p.sub('', x[i].string)
-        x[i].string = q.sub(', Male', x[i].string)
+        st[i].string = p.sub('', st[i].string)
+        st[i].string = q.sub(', Male', st[i].string)
 
 
 def shaping():
     shaping_1(study_design)
-    shaping_1(inclusion_criteria)
-    shaping_1(exclusion_criteria)
+#    shaping_1(inclusion_criteria)
+#    shaping_1(exclusion_criteria)
     shaping_1(condition)
     shaping_1(intervention)
     shaping_1(primary_outcome)
     shaping_2(scientific_title)
     shaping_3(web_address)
-    shaping_4(inclusion_gender)
+#    shaping_4(inclusion_gender)
 
 shaping()
 
 def text_output():
     print_obj = ""
-    for i in range(len(internal_number)):
+    for i in range(len(trialid)):
         print_obj += """
 ==== %03d ===================================================
 internal number: %s\n
@@ -136,6 +135,54 @@ primary_outcome: \t%s
 
     return print_obj
 
+
+def text_min_output():
+    print_obj = ""
+    for i in range(len(trialid)):
+        print_obj += """
+==== %03d ===================================================
+trialid: %s\n
+last refreshed on: %s\n
+public_title: %s\n
+scientific_title: %s\n
+primary_sponsor: %s\n
+date_registration: %s\n
+source_register: %s\n
+web_address: %s\n
+recruitment_status: %s\n
+other_records: %s\n
+inclusion_gender: %s\n
+date_enrollement: %s\n
+target_size: %s\n
+study_type: %s\n
+intervention: \t%s
+primary_outcome: \t%s
+============================================================""" %(
+            i +1,
+            trialid[i].string,
+            last_refreshed_on[i].string,
+            public_title[i].string,
+            scientific_title[i].string,
+            primary_sponsor[i].string,
+            date_registration[i].string,
+            source_register[i].string,
+            web_address[i].string,
+            recruitment_status[i].string,
+            other_records[i].string,
+            inclusion_gender[i].string,
+            date_enrollement[i].string,
+            target_size[i].string,
+            study_type[i].string,
+            intervention[i].string,
+            primary_outcome[i].string
+            #,secondary_id[i].string
+            )
+    f = codecs.open('output_min.txt', 'w', encoding='utf-8')
+    f.write(print_obj)
+    f.close()
+
+    return print_obj
+
 def make_csv():
     with open('export.csv', 'wb') as csvfile:
         export = csv.writer(csvfile, delimiter =',')
@@ -161,7 +208,7 @@ def make_csv():
                     ['intervention'] + 
                     ['primary_outcome'] + 
                     ['secondary_id'])
-        for i in range(len(internal_number)):
+        for i in range(len(trialid)):
             export.writerow([internal_number[i].string , 
             trialid[i].string , 
             last_refreshed_on[i].string , 
@@ -230,6 +277,7 @@ def make_pdf():
     c.save()
 
 if __name__ == '__main__':
-    text_output()
+    #text_output()
+    text_min_output()
     #make_csv()
-    make_pdf()
+    #make_pdf()
