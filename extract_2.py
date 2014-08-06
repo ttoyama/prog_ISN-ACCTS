@@ -47,10 +47,43 @@ def make_soup_dic(soup):
         result[i] = trial
     return result
 
+def shaping_1(st):
+    for i in range(len(st)):
+        p = re.compile('^[\w|\d|&lt;br&gt;]')
+        q = re.compile('&lt;br&gt;')
+        p_1 = p.findall(st[i].string)
+        st[i].string = p.sub('\n\t'+p_1[0], st[i].string)
+        st[i].string = q.sub('\n\t', st[i].string)  
+
+
+def shaping_3(st):
+    for i in range(len(st)):
+        p = re.compile('  +')
+        st[i].string = p.sub('', st[i].string)
+
+def shaping_4(st):
+    for i in range(len(st)):
+        p = re.compile('&lt;br&gt;')
+        q = re.compile('Male')
+        st[i].string = p.sub('', st[i].string)
+        st[i].string = q.sub(', Male', st[i].string)
+
+def reshape(soup_dict):
+    for i in range(len(soup_dict)):
+        for j in items:
+            pre_reshape = soup_dict[i][j]
+            match1 = re.compile(' +')
+            pre_reshape = match1.sub('', pre_reshape)
+            soup_dict[i][j] = pre_reshape
+
+#def make_text(soup_dict):
+
 
 trial_soup = make_trial_soup()
 make_noblank(trial_soup)
-result = make_soup_dic(trial_soup)
+soup_dict = make_soup_dic(trial_soup)
+reshape(soup_dict)
+#make_text(soup_dict)
 
 #if __name__ == '__main__':
     #text_output()
