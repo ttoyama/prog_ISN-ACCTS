@@ -28,25 +28,29 @@ def make_trial_soup():
     return trial_soup
 
 
-def make_noblank():
+def make_noblank(blank_soup):
     result = {}
-    for i in range(len(trial_soup)):
+    for i in range(len(blank_soup)):
         for item in items:
-            if trial_soup[i](item) == []:
-                tag1  = Tag(trial_soup[i], item)
+            if blank_soup[i](item) == []:
+                tag1  = Tag(blank_soup[i], item)
                 text1 = NavigableString('NA')
-                trial_soup[i].insert(0, tag1)
+                blank_soup[i].insert(0, tag1)
                 tag1.insert(0, text1)
-#        result[i] = {
-#            item : trial_soup[i](item)[0].text
-#        }
 
-
-
+def make_soup_dic(soup):
+    result = {}
+    for i in range(len(soup)):
+        trial = {}
+        for item in items:
+            trial[item] = soup[i](item)[0].text
+        result[i] = trial
+    return result
 
 
 trial_soup = make_trial_soup()
-make_noblank()
+make_noblank(trial_soup)
+result = make_soup_dic(trial_soup)
 
 #if __name__ == '__main__':
     #text_output()
