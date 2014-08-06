@@ -70,20 +70,29 @@ def shaping_4(st):
 
 def reshape(soup_dict):
     for i in range(len(soup_dict)):
-        for j in items:
-            pre_reshape = soup_dict[i][j]
+        for item in items:
+            pre_reshape = soup_dict[i][item]
             match1 = re.compile(' +')
             pre_reshape = match1.sub('', pre_reshape)
-            soup_dict[i][j] = pre_reshape
+            soup_dict[i][item] = pre_reshape
 
-#def make_text(soup_dict):
+def make_text(soup_dict):
+    f = open('./output/result.txt','w')
+    for i in soup_dict:
+        obj = "="*20 + "%03d" %(i+1) + "="*20 +"\n"
+        for item in items:
+            obj += soup_dict[i][item] + '\n'*2
+        f.write(obj)
+    f.close()
+
+
 
 
 trial_soup = make_trial_soup()
 make_noblank(trial_soup)
 soup_dict = make_soup_dic(trial_soup)
 reshape(soup_dict)
-#make_text(soup_dict)
+make_text(soup_dict)
 
 #if __name__ == '__main__':
     #text_output()
