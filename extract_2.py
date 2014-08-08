@@ -58,18 +58,22 @@ def make_soup_dic(soup):
 
 
 def reshape(soup_dict):
-    match1 = re.compile('  +')
-    match2 = re.compile('&lt;br&gt;')
+    match_space = re.compile('   +')
+    match_ltbrgt = re.compile('&lt;br&gt;')
+    match_lastfeed = re.compile('\n$')
+    match_feed = re.compile('\n')
     match_andgt = re.compile('&gt;')
     match_doublen = re.compile('\n\n+')
 
     for i in range(len(soup_dict)):
         for item in items:
             pre_reshape = soup_dict[i][item]
-            pre_reshape = match1.sub(' ', pre_reshape)
-            pre_reshape = match2.sub('\n', pre_reshape)
+            pre_reshape = match_space.sub(' ', pre_reshape)
+            pre_reshape = match_ltbrgt.sub('\n', pre_reshape)
             pre_reshape = match_andgt.sub('>', pre_reshape)
             pre_reshape = match_doublen.sub('\n', pre_reshape)
+            pre_reshape = match_lastfeed.sub('', pre_reshape)
+            pre_reshape = match_feed.sub('\n    ', pre_reshape)
             soup_dict[i][item] = pre_reshape
 
 
