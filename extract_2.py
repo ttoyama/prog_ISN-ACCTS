@@ -3,8 +3,9 @@ from BeautifulSoup import BeautifulStoneSoup as bss
 from BeautifulSoup import Tag, NavigableString
 import re
 import csv
+import codecs
 
-f = open("xml/ICTRP-Results_saro.xml", "r")
+f = open("xml/ICTRP-Results_long.xml", "r")
 f_data = f.readlines()
 #delete data after scientific titlech   
 
@@ -16,6 +17,15 @@ items =['internal_number', 'trialid', 'last_refreshed_on',
 'study_design', 'inclusion_criteria', 'exclusion_criteria', 
 'condition', 'intervention', 'primary_outcome', 'secondary_id']
 
+def make_title_item(source):
+    result = []
+    match1 = re.compile('_')
+    for i in source:
+        i = match1.sub(' ', i)
+        i = i.upper()
+        result.append(i)
+    return result
+
 def make_trial_soup():
     xml = ''.join(f_data)
     soup  = bs(xml)
@@ -26,7 +36,6 @@ def make_trial_soup():
         j = bs(str(i))
         trial_soup.append(j)
     return trial_soup
-
 
 def make_noblank(blank_soup):
     result = {}
@@ -49,25 +58,33 @@ def make_soup_dic(soup):
 
 
 def reshape(soup_dict):
+    match1 = re.compile('  +')
+    match2 = re.compile('&lt;br&gt;')
+    match_andgt = re.compile('&gt;')
+    match_doublen = re.compile('\n\n+')
     for i in range(len(soup_dict)):
         for item in items:
             pre_reshape = soup_dict[i][item]
-            match1 = re.compile(' +')
-            pre_reshape = match1.sub('', pre_reshape)
+            pre_reshape = match1.sub(' ', pre_reshape)
+            pre_reshape = match2.sub('\n', pre_reshape)
+            pre_reshape = match_andgt.sub('>', pre_reshape)
+            pre_reshape = match_doublen.sub('\n', pre_reshape)
             soup_dict[i][item] = pre_reshape
 
+
 def make_text(soup_dict):
-    f = open('./output/result.txt','w')
+    f = codecs.open('output/output.txt', 'w', encoding='utf-8')
     for i in soup_dict:
-        obj = "="*20 + "%03d" %(i+1) + "="*20 +"\n"
-        for item in items:
-            obj += soup_dict[i][item] + '\n'*2
+        obj = "="*25 + "%03d" %(i+1) + "="*25 +"\n"
+        for i in range(len(items)):
+            obj += title_items[i] + ': ' + soup_dict[i][items[i]] + '\n'
         f.write(obj)
+        f.write('\n')
     f.close()
 
 
 
-
+title_items = make_title_item(items)
 trial_soup = make_trial_soup()
 make_noblank(trial_soup)
 soup_dict = make_soup_dic(trial_soup)
