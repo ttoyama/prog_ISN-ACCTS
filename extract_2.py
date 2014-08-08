@@ -62,6 +62,7 @@ def reshape(soup_dict):
     match2 = re.compile('&lt;br&gt;')
     match_andgt = re.compile('&gt;')
     match_doublen = re.compile('\n\n+')
+
     for i in range(len(soup_dict)):
         for item in items:
             pre_reshape = soup_dict[i][item]
