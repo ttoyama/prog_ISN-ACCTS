@@ -19,9 +19,9 @@ items =['internal_number', 'trialid', 'last_refreshed_on',
 
 def make_title_item(source):
     result = []
-    match1 = re.compile('_')
+    regex1 = re.compile('_')
     for i in source:
-        i = match1.sub(' ', i)
+        i = regex1.sub(' ', i)
         i = i.upper()
         result.append(i)
     return result
@@ -58,22 +58,21 @@ def make_soup_dic(soup):
 
 
 def reshape(soup_dict):
-    match_space = re.compile('   +')
-    match_ltbrgt = re.compile('&lt;br&gt;')
-    match_lastfeed = re.compile('\n$')
-    match_feed = re.compile('\n')
-    match_andgt = re.compile('&gt;')
-    match_doublen = re.compile('\n\n+')
+    #regex_space = re.compile('   +')
+    regex_ltbrgt = re.compile('&lt;br&gt;')
+    regex_andgt = re.compile('&gt;')
+    regex_feed = re.compile('\n')
+    regex_doublen = re.compile('\n\n+')
 
     for i in range(len(soup_dict)):
         for item in items:
             pre_reshape = soup_dict[i][item]
-            pre_reshape = match_space.sub(' ', pre_reshape)
-            pre_reshape = match_ltbrgt.sub('\n', pre_reshape)
-            pre_reshape = match_andgt.sub('>', pre_reshape)
-            pre_reshape = match_doublen.sub('\n', pre_reshape)
-            pre_reshape = match_lastfeed.sub('', pre_reshape)
-            pre_reshape = match_feed.sub('\n    ', pre_reshape)
+            pre_reshape = pre_reshape.strip()
+            pre_reshape = regex_ltbrgt.sub('\n', pre_reshape)
+            pre_reshape = regex_andgt.sub('>', pre_reshape)
+            pre_reshape = regex_doublen.sub('\n', pre_reshape)
+            pre_reshape = regex_feed.sub('\n    ', pre_reshape)
+            pre_reshape = pre_reshape.rstrip('\n')
             soup_dict[i][item] = pre_reshape
 
 
