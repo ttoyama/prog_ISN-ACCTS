@@ -32,20 +32,27 @@ def make_trial_soup():
     ssoup = bss(xml)
 
     trial_soup = [] #each item of list is BeautifulSoup
-    for i in soup('trial'):
+    for i in ssoup('trial'):
         j = bs(str(i))
         trial_soup.append(j)
     return trial_soup
 
 def make_noblank(soup_with_blank):
-    result = {}
+    result = []
     for i in range(len(soup_with_blank)):
         for item in items:
-            if soup_with_blank[i](item) == []:
+            if (
+                (soup_with_blank[i](item) == []) or
+                ('<target_size>\n<study_type>' in soup_with_blank[i](item)[0].prettify()) == True
+                ):
+                #if some content is blank, they include following tags
                 tag1  = Tag(soup_with_blank[i], item)
                 text1 = NavigableString('NA')
                 soup_with_blank[i].insert(0, tag1)
                 tag1.insert(0, text1)
+
+        result.append(soup_with_blank[i])
+    return result
 
 def make_soup_dic(soup):
     result = {}
@@ -90,7 +97,7 @@ def make_text(soup_dict):
 
 title_items = make_title_item(items)
 trial_soup = make_trial_soup()
-make_noblank(trial_soup)
+trial_soup = make_noblank(trial_soup)
 soup_dict = make_soup_dic(trial_soup)
 reshape(soup_dict)
 make_text(soup_dict)
