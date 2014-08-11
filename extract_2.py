@@ -41,15 +41,21 @@ def make_noblank(soup_with_blank):
     result = []
     for i in range(len(soup_with_blank)):
         for item in items:
-            if (
-                (soup_with_blank[i](item) == []) or
-                ('<target_size>\n<study_type>' in soup_with_blank[i](item)[0].prettify()) == True
-                ):
+            if soup_with_blank[i](item) == []:
+                tag1  = Tag(soup_with_blank[i], item)
+                text1 = NavigableString('NA')
+                soup_with_blank[i].insert(0, tag1)
+                tag1.insert(0, text1)
+                #print 'found blanks!!!'
+
+            if  ('<target_size>\n<study_type>' in soup_with_blank[i](item)[0].prettify()) == True:
                 #if some content is blank, they include following tags
                 tag1  = Tag(soup_with_blank[i], item)
                 text1 = NavigableString('NA')
                 soup_with_blank[i].insert(0, tag1)
                 tag1.insert(0, text1)
+                #print i, item, 'found target!!'
+
 
         result.append(soup_with_blank[i])
     return result
