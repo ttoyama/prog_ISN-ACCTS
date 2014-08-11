@@ -5,7 +5,7 @@ import re
 import csv
 import codecs
 
-f = open("xml/ICTRP-Results_long.xml", "r")
+f = open("xml/ICTRP-Results.xml", "r")
 f_data = f.readlines()
 #delete data after scientific titlech   
 
@@ -37,14 +37,14 @@ def make_trial_soup():
         trial_soup.append(j)
     return trial_soup
 
-def make_noblank(blank_soup):
+def make_noblank(soup_with_blank):
     result = {}
-    for i in range(len(blank_soup)):
+    for i in range(len(soup_with_blank)):
         for item in items:
-            if blank_soup[i](item) == []:
-                tag1  = Tag(blank_soup[i], item)
+            if soup_with_blank[i](item) == []:
+                tag1  = Tag(soup_with_blank[i], item)
                 text1 = NavigableString('NA')
-                blank_soup[i].insert(0, tag1)
+                soup_with_blank[i].insert(0, tag1)
                 tag1.insert(0, text1)
 
 def make_soup_dic(soup):
