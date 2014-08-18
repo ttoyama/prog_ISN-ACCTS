@@ -4,19 +4,25 @@ from BeautifulSoup import Tag, NavigableString
 import re
 import csv
 import codecs
+import pandas as pd
+import numpy as np
+from pandas import DataFrame
+from pandas import Series
 
 f = open("xml/ICTRP-Results.xml", "r")
 f_data = f.readlines()
 #delete data after scientific titlech   
 
-items =['internal_number', 'trialid', 'last_refreshed_on', 
+items =['internal_number', 'trialid', 'secondary_id',
+'source_register', 'web_address', 
+'date_registration', 'date_enrollement', 'last_refreshed_on', 
 'public_title', 'scientific_title', 'primary_sponsor', 
-'date_registration', 'source_register', 'web_address', 
 'recruitment_status', 'other_records', 'inclusion_gender', 
-'date_enrollement', 'target_size', 'study_type', 
+'target_size', 'study_type', 
 'study_design', 'inclusion_criteria', 'exclusion_criteria', 
-'condition', 'intervention', 'primary_outcome', 'secondary_id']
+'condition', 'intervention', 'primary_outcome']
 
+#Change 'internal_number' into 'INTERNAL NUMBER'
 def make_title_item(source):
     result = []
     regex1 = re.compile('_')
@@ -37,6 +43,7 @@ def make_trial_soup():
         trial_soup.append(j)
     return trial_soup
 
+#Delete blank from soup
 def make_noblank(soup_with_blank):
     result = []
     for i in range(len(soup_with_blank)):
@@ -99,6 +106,17 @@ def make_text(soup_dict):
         f.write('\n')
     f.close()
 
+def make_text_from_df(df):
+    f = codecs.open('output/output_2.txt', 'w', encoding='utf-8')
+    for i in df.index:
+        obj = "="*25 + "%03d" %(i+1) + "="*25 +"\n"
+        for j in range(len(items)):
+            obj += title_items[j] + ': '
+            obj += '%s' %df.ix[i,items[j]]
+            obj += '\n'
+        f.write(obj)
+        f.write('\n')
+    f.close()
 
 
 title_items = make_title_item(items)
@@ -107,6 +125,14 @@ trial_soup = make_noblank(trial_soup)
 soup_dict = make_soup_dic(trial_soup)
 reshape(soup_dict)
 make_text(soup_dict)
+
+#create dataframe from soup_dict and make .txt
+df = DataFrame(soup_dict)
+df = df.T
+df = df.drop_duplicates().reset_index()
+make_text_from_df(df)
+
+
 
 #if __name__ == '__main__':
     #text_output()
